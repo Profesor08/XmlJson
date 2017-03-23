@@ -91,7 +91,7 @@
 <pre style="color:#f8f8f8">&lt;<span style="color:#e0c589">script</span> <span style="color:#e0c589">type</span>=<span style="color:#65b042">"text/javascript"</span>>
   <span style="color:#99cf50">const</span> xmlString <span style="color:#e28964">=</span> <span style="color:#65b042">"&lt;catalog>&lt;book>&lt;/book>&lt;book>&lt;/book>&lt;/catalog>"</span>;
   <span style="color:#99cf50">const</span> xmlObject <span style="color:#e28964">=</span> <span style="color:#e28964">new</span> <span style="text-decoration:underline">DOMParser</span>().parseFromString(xmlString, <span style="color:#65b042">"text/xml"</span>);
-  <span style="color:#99cf50">const</span> json <span style="color:#e28964">=</span> XmlJson.parseFromXmlString(xmlString);
+  <span style="color:#99cf50">const</span> json <span style="color:#e28964">=</span> XmlJson.parseFromXmlObject(xmlObject);
 &lt;/<span style="color:#e0c589">script</span>>
 </pre>
     </div>

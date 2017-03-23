@@ -18,5 +18,5 @@ const json = XmlJson.parseFromXmlString(xmlString);
 ```javascript
 const xmlString = "<catalog><book></book><book></book></catalog>";
 const xmlObject = new DOMParser().parseFromString(xmlString, "text/xml");
-const json = XmlJson.parseFromXmlString(xmlString);
+const json = XmlJson.parseFromXmlObject(xmlObject);
 ```
