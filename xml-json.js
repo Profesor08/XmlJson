@@ -35,7 +35,7 @@ function XmlJson()
    * @param node
    * @returns {{}}
    */
-  function parse(node)
+  function parseXml(node)
   {
     let json = {};
 
@@ -44,13 +44,21 @@ function XmlJson()
       let parsed = {};
 
       parsed["@attributes"] = attributes(node);
-      parsed["@text"] = node.textContent;
+
+      if (node.children.length)
+      {
+        parsed["@text"] = "";
+      }
+      else
+      {
+        parsed["@text"] = node.textContent;
+      }
 
       /**
        * Just I want to see @attributes and @text on top.
        * If you don't like this, you can remove this and set [let parsed = parse(node)]
        */
-      foreach(parse(node), (obj, property) =>
+      foreach(parseXml(node), (obj, property) =>
       {
         parsed[property] = obj;
       });
@@ -106,7 +114,77 @@ function XmlJson()
    */
   this.parseFromXmlObject = function (xmlObject)
   {
-    return parse(xmlObject);
+    return parseXml(xmlObject);
+  };
+
+
+  function parseJson(json)
+  {
+    let properties = Object.keys(json);
+
+    if (properties.length != 1)
+    {
+      throw "JSON object must have only one root element!";
+    }
+
+    let xml = document.implementation.createDocument("", "", null);
+
+    //const root = xml.createElement(properties[0]);
+
+    //xml.appendChild(root);
+
+    let parse = (root, json) =>
+    {
+      let properties = Object.keys(json);
+
+      foreach(properties, property =>
+      {
+        if (property == "@text") return;
+        if (property == "@attributes") return;
+
+        if (Array.isArray(json[property]))
+        {
+          foreach(json[property], obj =>
+          {
+            root.appendChild(parse(xml.createElement(property), obj));
+          });
+        }
+        else
+        {
+          root.appendChild(parse(xml.createElement(property), json[property]));
+        }
+      });
+
+      if (json.hasOwnProperty("@text"))
+      {
+        root.appendChild(xml.createTextNode(json["@text"]));
+      }
+
+      if (json.hasOwnProperty("@attributes"))
+      {
+        foreach(json["@attributes"], (attribute, value) =>
+        {
+          root.setAttribute(attribute, value);
+        });
+      }
+
+      return root;
+    };
+
+
+    console.dir(parse(xml, json));
+
+    return new XMLSerializer().serializeToString(xml);
+  }
+
+  this.parseFromJsonString = function (jsonString)
+  {
+    return parseJson(JSON.parse(jsonString));
+  };
+
+  this.parseFromJsonObject = function (jsonObject)
+  {
+    return parseJson(jsonObject);
   };
 }
 
@@ -127,3 +205,15 @@ XmlJson.parseFromXmlObject = function (xmlObject)
 {
   return new XmlJson().parseFromXmlObject(xmlObject);
 };
+
+
+XmlJson.parseFromJsonObject = function (xmlObject)
+{
+  return new XmlJson().parseFromJsonObject(xmlObject);
+};
+
+XmlJson.parseFromJsonString = function (xmlObject)
+{
+  return new XmlJson().parseFromJsonString(xmlObject);
+};
+
