@@ -1,22 +1,21 @@
 # XmlJson
 
-## Parsing XML into JSON
+Parsing XML into JSON object
 
-### Usage:
-
-#### Include into your html page
+## Installation
 ```html
 <script type="text/javascript" src="../xml-json.js"></script>
 ```
 
+## Usage
+
 ```javascript
 const xmlString = "<catalog><book></book><book></book></catalog>";
-const json = XmlJson.parseFromXmlString(xmlString);
+const json1 = XmlJson.parseFromXmlString(xmlString);
 ```
 
-#### Or
 ```javascript
 const xmlString = "<catalog><book></book><book></book></catalog>";
 const xmlObject = new DOMParser().parseFromString(xmlString, "text/xml");
-const json = XmlJson.parseFromXmlObject(xmlObject);
+const json2 = XmlJson.parseFromXmlObject(xmlObject);
 ```
