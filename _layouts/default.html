@@ -53,6 +53,7 @@
     <div class="content-center">
       <button class="try-it xml-to-json">XML to JSON</button>
       <button class="try-it json-to-xml">JSON to XML</button>
+      <button class="try-it return-button json-to-xml">Return</button>
     </div>
     <div class="content-center">
       <textarea class="xml">
@@ -163,6 +164,7 @@
 
 <script type="text/javascript">
   const tryButton = document.querySelector(".try-it");
+  const returnButton = document.querySelector(".try-it.return-button");
   const xmlToJsonButton = document.querySelector(".xml-to-json");
   const jsonToXmlButton = document.querySelector(".json-to-xml");
 
@@ -170,6 +172,11 @@
   const jsonContainer = document.querySelector(".json");
 
   tryButton.addEventListener("click", function ()
+  {
+    toggleShowTest();
+  });
+
+  returnButton.addEventListener("click", function ()
   {
     toggleShowTest();
   });

@@ -27,6 +27,20 @@
   cursor: pointer;
 }
 
+.try-it.return-button {
+  right: 30px;
+  position: absolute;
+  background: linear_gradient(#D67373, #F23030);
+  background-color: #F23030;
+  border: 1px solid #F23030;
+}
+
+.try-it.return-button:hover {
+  background: linear_gradient(#D67373, #F23030);
+  background-color: #C62727;
+  border: 1px solid #F23030;
+}
+
 .hidden {
   display: none;
 }
@@ -54,4 +68,5 @@
 
 .test .content-center {
   text-align: center;
+  position: relative;
 }
