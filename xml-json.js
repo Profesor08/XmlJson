@@ -35,7 +35,7 @@ function XmlJson()
    * @param node
    * @returns {{}}
    */
-  function parseXml(node)
+  function toJson(node)
   {
     let json = {};
 
@@ -58,7 +58,7 @@ function XmlJson()
        * Just I want to see @attributes and @text on top.
        * If you don't like this, you can remove this and set [let parsed = parse(node)]
        */
-      foreach(parseXml(node), (obj, property) =>
+      foreach(toJson(node), (obj, property) =>
       {
         parsed[property] = obj;
       });
@@ -100,43 +100,27 @@ function XmlJson()
   }
 
   /**
-   * Parsing an XML string to JSON object
-   * @param xmlString
+   * Parsing JSON object to XMLDocument
+   * @param json
+   * @returns {*}
    */
-  this.parseFromXmlString = function (xmlString)
+  function toXml(json)
   {
-    return this.parseFromXmlObject(new DOMParser().parseFromString(xmlString, "text/xml"));
-  };
-
-  /**
-   * Parsing an XMLDocument to JSON object
-   * @param xmlObject
-   */
-  this.parseFromXmlObject = function (xmlObject)
-  {
-    return parseXml(xmlObject);
-  };
-
-
-  function parseJson(json)
-  {
-    let properties = Object.keys(json);
-
-    if (properties.length != 1)
-    {
-      throw "JSON object must have only one root element!";
-    }
-
     let xml = document.implementation.createDocument("", "", null);
 
-    //const root = xml.createElement(properties[0]);
-
-    //xml.appendChild(root);
-
+    /**
+     * Recursive creation of XML tree according to passed json object
+     * @param root - parent node
+     * @param json
+     * @returns {*}
+     */
     let parse = (root, json) =>
     {
       let properties = Object.keys(json);
 
+      /**
+       * Creating tree
+       */
       foreach(properties, property =>
       {
         if (property == "@text") return;
@@ -155,11 +139,17 @@ function XmlJson()
         }
       });
 
+      /**
+       * Assign text
+       */
       if (json.hasOwnProperty("@text"))
       {
         root.appendChild(xml.createTextNode(json["@text"]));
       }
 
+      /**
+       * Set node attributes
+       */
       if (json.hasOwnProperty("@attributes"))
       {
         foreach(json["@attributes"], (attribute, value) =>
@@ -171,49 +161,110 @@ function XmlJson()
       return root;
     };
 
-
-    console.dir(parse(xml, json));
-
-    return new XMLSerializer().serializeToString(xml);
+    return parse(xml, json);
   }
 
-  this.parseFromJsonString = function (jsonString)
+  /**
+   * Parsing an XML string to JSON
+   * @param {string} xmlString
+   * @param {boolean} returnObject - return XMLDocument object or XML string
+   * @returns {*}
+   */
+  this.xmlStringToJson = function (xmlString, returnObject = true)
   {
-    return parseJson(JSON.parse(jsonString));
+    return this.xmlObjectToJson(new DOMParser().parseFromString(xmlString, "text/xml"), returnObject);
   };
 
-  this.parseFromJsonObject = function (jsonObject)
+  /**
+   * Parsing an XMLDocument to JSON
+   * @param {object} xmlObject
+   * @param {boolean} returnObject - return XMLDocument object or XML string
+   * @returns {*}
+   */
+  this.xmlObjectToJson = function (xmlObject, returnObject = true)
   {
-    return parseJson(jsonObject);
+    let json = toJson(xmlObject);
+
+    if (returnObject)
+    {
+      return json;
+    }
+
+    return JSON.stringify(json);
+  };
+
+  /**
+   * Parsing an JSON string to XML
+   * @param {string} jsonString
+   * @param {boolean} returnObject - return XMLDocument object or XML string
+   * @returns {*}
+   */
+  this.jsonStringToXml = function (jsonString, returnObject = true)
+  {
+    return this.jsonObjectToXml(JSON.parse(jsonString), returnObject);
+  };
+
+  /**
+   * Parsing an JSON object to XML
+   * @param {object} jsonObject
+   * @param {boolean} returnObject - return XMLDocument object or XML string, default true
+   * @returns {*}
+   */
+  this.jsonObjectToXml = function (jsonObject, returnObject = true)
+  {
+    let xml = toXml(jsonObject);
+
+    if (returnObject)
+    {
+      return xml;
+    }
+
+    return new XMLSerializer().serializeToString(xml);
   };
 }
 
-/**
- * Parsing an XML string to JSON object
- * @param xmlString
- */
-XmlJson.parseFromXmlString = function (xmlString)
-{
-  return new XmlJson().parseFromXmlString(xmlString);
-};
 
 /**
- * Parsing an XMLDocument to JSON object
- * @param xmlObject
+ * Parsing an XML string to JSON
+ * @param {string} xmlString
+ * @param {boolean} returnObject - return XMLDocument object or XML string
+ * @returns {string|object}
  */
-XmlJson.parseFromXmlObject = function (xmlObject)
+XmlJson.xmlStringToJson = function (xmlString, returnObject = true)
 {
-  return new XmlJson().parseFromXmlObject(xmlObject);
+  return new XmlJson().xmlStringToJson(xmlString, returnObject);
 };
 
-
-XmlJson.parseFromJsonObject = function (xmlObject)
+/**
+ * Parsing an XMLDocument to JSON
+ * @param {object} xmlObject
+ * @param {boolean} returnObject - return XMLDocument object or XML string
+ * @returns {string|object}
+ */
+XmlJson.xmlObjectToJson = function (xmlObject, returnObject = true)
 {
-  return new XmlJson().parseFromJsonObject(xmlObject);
+  return new XmlJson().xmlObjectToJson(xmlObject, returnObject);
 };
 
-XmlJson.parseFromJsonString = function (xmlObject)
+/**
+ * Parsing an JSON string to XML
+ * @param {string} jsonString
+ * @param {boolean} returnObject - return XMLDocument object or XML string
+ * @returns {string|object}
+ */
+XmlJson.jsonStringToXml = function (jsonString, returnObject = true)
 {
-  return new XmlJson().parseFromJsonString(xmlObject);
+  return new XmlJson().jsonStringToXml(jsonString, returnObject);
+};
+
+/**
+ * Parsing an JSON object to XML
+ * @param {object} jsonObject
+ * @param {boolean} returnObject - return XMLDocument object or XML string
+ * @returns {string|object}
+ */
+XmlJson.jsonObjectToXml = function (jsonObject, returnObject = true)
+{
+  return new XmlJson().jsonObjectToXml(jsonObject, returnObject);
 };
 
