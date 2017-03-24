@@ -3,6 +3,55 @@
 
 @import "{{ site.theme }}";
 
-h1 {
-  color: red;
+.try-it {
+  color: white;
+  border: 1px solid #5d910b;
+  background: linear_gradient(#93bd20, #659e10);
+  border-radius: 2px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 3px 7px rgba(0, 0, 0, 0.7);
+  background-color: #93bd20;
+  padding: 10px 12px;
+  margin-top: 6px;
+  line-height: 14px;
+  font-size: 14px;
+  display: inline-block;
+  text-align: center;
+  outline: none;
+}
+
+.try-it:hover {
+  background: linear_gradient(#749619, #527f0e);
+  background-color: #659e10;
+  border: 1px solid #527f0e;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.2), 0 1px 0 transparent;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+
+.wrapper.full-page {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+}
+
+.wrapper.full-page .test {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+}
+
+.test textarea {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: inline-block;
+  width: 49%;
+  height: 800px;
+}
+
+.test .content-center {
+  text-align: center;
 }

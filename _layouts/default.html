@@ -4,9 +4,10 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <title>{{ site.title | default: site.github.repository_name }} by {{ site.github.owner_name }}</title>
-  <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+  <link rel="stylesheet" href="https://profesor08.github.io/XmlJson/assets/css/style.css?v=ecba51e8a907befdd9e37ad5a9c71a266130919f">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script src="{{ '/assets/js/respond.js' | relative_url }}"></script>
+  <script src="{{ '/assets/js/xml-json.js' | relative_url }}"></script>
   <!--[if lt IE 9]>
   <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
@@ -14,7 +15,6 @@
   <link rel="stylesheet" href="{{ '/assets/css/ie.css' | relative_url }}">
   <![endif]-->
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
 </head>
 <body>
 <div id="header">
@@ -28,9 +28,9 @@
   </nav>
 </div><!-- end header -->
 
-<div class="wrapper">
+<div class="wrapper full-page">
   
-  <section>
+  <section class="main hidden">
     <div id="title">
       <h1>{{ site.title | default: site.github.repository_name }}</h1>
       <p>{{ site.description | default: site.github.project_tagline }}</p>
@@ -39,11 +39,154 @@
       <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
     </div>
     
+    <div>
+      <div class="try-it">Try It</div>
+      <br>
+      <br>
+    </div>
+    
     {{ content }}
   
   </section>
+  
+  <section class="test">
+    <div class="content-center">
+      <button class="try-it xml-to-json">XML to JSON</button>
+      <button class="try-it json-to-xml">JSON to XML</button>
+    </div>
+    <div class="content-center">
+      <textarea class="xml">
+<catalog>
+  <book id="bk101">
+    <author>Gambardella, Matthew</author>
+    <title>XML Developer's Guide</title>
+    <genre>Computer</genre>
+    <price>44.95</price>
+    <publish_date>2000-10-01</publish_date>
+    <description>An in-depth look at creating applications
+      with XML.
+    </description>
+  </book>
+  <book id="bk102">
+    <author>Ralls, Kim</author>
+    <title>Midnight Rain</title>
+    <genre>Fantasy</genre>
+    <price>5.95</price>
+    <publish_date>2000-12-16</publish_date>
+    <description>A former architect battles corporate zombies,
+      an evil sorceress, and her own childhood to become queen
+      of the world.
+    </description>
+  </book>
+  <book id="bk103">
+    <author>Corets, Eva</author>
+    <title>Maeve Ascendant</title>
+    <genre>Fantasy</genre>
+    <price>5.95</price>
+    <publish_date>2000-11-17</publish_date>
+    <description>After the collapse of a nanotechnology
+      society in England, the young survivors lay the
+      foundation for a new society.
+    </description>
+  </book>
+</catalog>
+      </textarea>
+      <textarea class="json"></textarea>
+    </div>
+  </section>
 
 </div>
+
+<script type="text/javascript">
+  function toggleShowTest()
+  {
+    const test = document.querySelector(".test");
+    const main = document.querySelector(".main");
+    const wrapper = document.querySelector(".wrapper");
+
+    if (test.classList.contains("hidden"))
+    {
+      main.classList.add("hidden");
+      wrapper.classList.add("full-page");
+      test.classList.remove("hidden");
+    }
+    else
+    {
+      test.classList.add("hidden");
+      wrapper.classList.remove("full-page");
+      main.classList.remove("hidden");
+    }
+  }
+
+  function formatXml(xml)
+  {
+    let formatted = '';
+    let reg = /(>)(<)(\/*)/g;
+    xml = xml.replace(reg, '$1\r\n$2$3');
+    let pad = 0;
+    xml.split('\r\n').forEach(function (node)
+    {
+      let indent = 0;
+      if (node.match(/.+<\/\w[^>]*>$/))
+      {
+        indent = 0;
+      }
+      else if (node.match(/^<\/\w/))
+      {
+        if (pad != 0)
+        {
+          pad -= 1;
+        }
+      }
+      else if (node.match(/^<\w([^>]*[^\/])?>.*$/))
+      {
+        indent = 1;
+      }
+      else
+      {
+        indent = 0;
+      }
+
+      let padding = '';
+      for (let i = 0; i < pad; i++)
+      {
+        padding += '  ';
+      }
+
+      formatted += padding + node + '\r\n';
+      pad += indent;
+    });
+
+    return formatted;
+  }
+</script>
+
+<script type="text/javascript">
+  const tryButton = document.querySelector(".try-it");
+  const xmlToJsonButton = document.querySelector(".xml-to-json");
+  const jsonToXmlButton = document.querySelector(".json-to-xml");
+
+  const xmlContainer = document.querySelector(".xml");
+  const jsonContainer = document.querySelector(".json");
+
+  tryButton.addEventListener("click", function ()
+  {
+    toggleShowTest();
+  });
+
+  xmlToJsonButton.addEventListener("click", function ()
+  {
+    jsonContainer.value = JSON.stringify(XmlJson.xmlStringToJson(xmlContainer.value), null, 2);
+  });
+
+  jsonToXmlButton.addEventListener("click", function ()
+  {
+    xmlContainer.value = formatXml(XmlJson.jsonStringToXml(jsonContainer.value, false));
+  });
+
+  jsonContainer.value = JSON.stringify(XmlJson.xmlStringToJson(xmlContainer.value), null, 2);
+
+</script>
 
 {% if site.google_analytics %}
 <script type="text/javascript">
