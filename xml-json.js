@@ -152,7 +152,7 @@ function XmlJson()
        */
       if (json.hasOwnProperty("@attributes"))
       {
-        foreach(json["@attributes"], (attribute, value) =>
+        foreach(json["@attributes"], (value, attribute) =>
         {
           root.setAttribute(attribute, value);
         });
