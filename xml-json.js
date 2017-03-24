@@ -11,7 +11,7 @@ function XmlJson()
    */
   function foreach(collection, callback)
   {
-    if (Array.isArray(collection))
+    if (Array.isArray(collection) || collection.length !== undefined)
     {
       for (let i = 0; i < collection.length; i++)
       {
@@ -65,7 +65,7 @@ function XmlJson()
 
       if (json.hasOwnProperty(node.nodeName))
       {
-        if (!json[node.nodeName].length)
+        if (!Array.isArray(json[node.nodeName]))
         {
           let tmp = json[node.nodeName];
           json[node.nodeName] = [tmp];
